@@ -1,0 +1,30 @@
+= ruby-mawk
+
+== Description
+
+Ruby binding for libmawk
+
+see http://repo.hu/projects/libmawk/
+
+== Install
+
+gem install mawk
+
+== Example
+
+  #!/usr/bin/env ruby
+  
+  require 'mawk'
+  
+  open('file.txt') do |f|
+    f.awk('/London/ {print}')
+  end
+  
+  str = <<-EOS
+    London Bridge is broken down,
+    Broken down, bloken down.
+    London Bridge is bloken down,
+    My fair lady.
+  EOS
+  
+  puts str.sawk('{print $2}')
