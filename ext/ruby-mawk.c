@@ -1,7 +1,7 @@
 #include "ruby-mawk.h"
 
-static VALUE rb_cAWK;
-static VALUE rb_eAWKError;
+static VALUE rb_cMAWK;
+static VALUE rb_eMAWKError;
 
 static void rb_mawk_free(struct mawk *p) {
   xfree(p);
@@ -22,19 +22,19 @@ static VALUE rd_mawk_initialize(VALUE self, VALUE script) {
   p->m = libmawk_initialize_stage1(argc, argv);
 
   if (p->m == NULL) {
-    rb_raise(rb_eAWKError, "Init failed");
+    rb_raise(rb_eMAWKError, "Init failed");
   }
 
   p->m = libmawk_initialize_stage2(p->m);
 
   if (p->m->compile_error_count != 0) {
     libmawk_uninitialize(p->m);
-    rb_raise(rb_eAWKError, "Compile error");
+    rb_raise(rb_eMAWKError, "Compile error");
   }
 
   if (p->m->do_exit) {
     libmawk_uninitialize(p->m);
-    rb_raise(rb_eAWKError, "Do exit");
+    rb_raise(rb_eMAWKError, "Do exit");
   }
 
   p->m = libmawk_initialize_stage3(p->m);
@@ -70,13 +70,13 @@ static VALUE rd_mawk_run_main(VALUE self) {
 }
 
 void Init_mawkc() {
-  rb_cAWK = rb_define_class("AWK", rb_cObject);
-  rb_define_alloc_func(rb_cAWK, rb_mawk_alloc);
-  rb_define_private_method(rb_cAWK, "initialize", rd_mawk_initialize, 1);
-  rb_define_method(rb_cAWK, "uninitialize", rd_mawk_uninitialize, 0);
-  rb_define_method(rb_cAWK, "append_input", rd_mawk_append_input, 1);
-  rb_define_method(rb_cAWK, "<<", rd_mawk_append_input, 1);
-  rb_define_method(rb_cAWK, "run_main", rd_mawk_run_main, 0);
+  rb_cMAWK = rb_define_class("MAWK", rb_cObject);
+  rb_define_alloc_func(rb_cMAWK, rb_mawk_alloc);
+  rb_define_private_method(rb_cMAWK, "initialize", rd_mawk_initialize, 1);
+  rb_define_method(rb_cMAWK, "uninitialize", rd_mawk_uninitialize, 0);
+  rb_define_method(rb_cMAWK, "append_input", rd_mawk_append_input, 1);
+  rb_define_method(rb_cMAWK, "<<", rd_mawk_append_input, 1);
+  rb_define_method(rb_cMAWK, "run_main", rd_mawk_run_main, 0);
 
-  rb_eAWKError = rb_define_class_under(rb_cAWK, "Error", rb_eStandardError);
+  rb_eMAWKError = rb_define_class_under(rb_cMAWK, "Error", rb_eStandardError);
 }
