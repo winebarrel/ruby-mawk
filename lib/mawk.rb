@@ -1,5 +1,6 @@
 require 'mawkc'
 require 'tempfile'
+require 'stringio'
 
 module AWK
   def awk(script)
@@ -39,5 +40,9 @@ class IO
 end
 
 class String
+  include AWK
+end
+
+class StringIO
   include AWK
 end
