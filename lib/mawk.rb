@@ -20,11 +20,23 @@ module AWK
     out = nil
 
     begin
-      stdout = $stdout.clone
-      $stdout.reopen(file)
-      awk(script)
+      begin
+        stdout = $stdout.clone
+        $stdout.reopen(file)
+        awk(script)
+      ensure
+        $stdout.reopen(stdout)
+      end
+
       file.rewind
-      out = file.read
+
+      if block_given?
+        file.each_line do |line|
+          yield(line.chomp)
+        end
+      else
+        out = file.read
+      end
     ensure
       $stdout.reopen(stdout)
       file.close
