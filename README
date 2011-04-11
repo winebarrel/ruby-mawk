@@ -27,4 +27,8 @@ gem install mawk
     My fair lady.
   EOS
   
-  puts str.sawk('{print $2}')
+  #puts str.sawk('{print $2}')
+  
+  str.sawk('{print $2}') do |line|
+    puts line
+  end
